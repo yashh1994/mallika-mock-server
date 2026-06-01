@@ -130,3 +130,183 @@ Fetch from the cataloged collection of generated recipes using offsets.
   "timestamp": "2026-05-31T09:00:00.000Z"
 }
 ```
+
+---
+
+## 3. Send OTP
+Generates and sends a 4-digit OTP to a registered phone number.
+- **URL**: `/api/auth/send-otp`
+- **Method**: `POST`
+
+### Required Payload
+```json
+{
+  "phoneNumber": "+1234567890"
+}
+```
+
+### Potential Responses
+**✅ 200 OK (Success)**
+```json
+{
+  "success": true,
+  "message": "OTP sent successfully to +1234567890",
+  "data": {
+    "otp": "1234"
+  },
+  "timestamp": "2026-06-01T10:00:00.000Z"
+}
+```
+
+**❌ 404 Not Found (User not registered)**
+```json
+{
+  "success": false,
+  "message": "User with this phone number not found.",
+  "data": null,
+  "timestamp": "2026-06-01T10:00:00.000Z"
+}
+```
+
+---
+
+## 4. Validate OTP
+Validates the OTP for a given phone number and returns user details if successful.
+- **URL**: `/api/auth/validate-otp`
+- **Method**: `POST`
+
+### Required Payload
+```json
+{
+  "phoneNumber": "+1234567890",
+  "otp": "1234"
+}
+```
+
+### Potential Responses
+**✅ 200 OK (Success)**
+```json
+{
+  "success": true,
+  "message": "OTP validated successfully.",
+  "data": {
+    "user": {
+      "id": "u123",
+      "phoneNumber": "+1234567890",
+      "name": "John Doe",
+      "profileImageUrl": "https://via.placeholder.com/150"
+    }
+  },
+  "timestamp": "2026-06-01T10:05:00.000Z"
+}
+```
+
+**❌ 400 Bad Request (Invalid OTP)**
+```json
+{
+  "success": false,
+  "message": "Invalid OTP provided.",
+  "data": null,
+  "timestamp": "2026-06-01T10:05:00.000Z"
+}
+```
+
+---
+
+## 5. Get Featured Recipes (Paginated)
+Fetch from the cataloged collection of featured recipes using offsets.
+- **URL**: `/api/recipes/get-featured-recipes?page=1&limit=10`
+- **Method**: `GET`
+- **Query Params**:
+  - `page` (optional, default `1`)
+  - `limit` (optional, default `10`)
+
+### Success Response
+```json
+{
+  "success": true,
+  "message": "Featured recipes fetched successfully.",
+  "data": {
+    "recipes": [
+      {
+        "id": "feat1x",
+        "recipeTitle": "Featured Dish 1",
+        "difficulty": "Medium",
+        "timeToCookInMinutes": 30,
+        "thumbnailImageUrl": "https://via.placeholder.com/300"
+      }
+    ],
+    "pagination": {
+      "totalItems": 15,
+      "currentPage": 1,
+      "totalPages": 2,
+      "limit": 10,
+      "hasMore": true
+    }
+  },
+  "timestamp": "2026-06-01T10:10:00.000Z"
+}
+```
+
+---
+
+## 6. Get All Cookbooks
+Fetch all available cookbooks in the database.
+- **URL**: `/api/recipes/get-cookbooks`
+- **Method**: `GET`
+
+### Success Response
+```json
+{
+  "success": true,
+  "message": "Cookbooks fetched successfully.",
+  "data": [
+    {
+      "id": "cb1",
+      "title": "Healthy Living",
+      "author": "Chef Jane",
+      "coverImageUrl": "https://via.placeholder.com/200",
+      "recipesCount": 12,
+      "popularRecipeId": "1mab2xd"
+    }
+  ],
+  "timestamp": "2026-06-01T10:15:00.000Z"
+}
+```
+
+---
+
+## 7. Get Cookbook by ID
+Fetch details of a single specific cookbook.
+- **URL**: `/api/recipes/get-cookbook/:id`
+- **Method**: `GET`
+- **Path Params**:
+  - `id`: The string ID of the cookbook.
+
+### Potential Responses
+**✅ 200 OK (Success)**
+```json
+{
+  "success": true,
+  "message": "Cookbook details fetched successfully.",
+  "data": {
+    "id": "cb1",
+    "title": "Healthy Living",
+    "author": "Chef Jane",
+    "coverImageUrl": "https://via.placeholder.com/200",
+    "recipesCount": 12,
+    "popularRecipeId": "1mab2xd"
+  },
+  "timestamp": "2026-06-01T10:20:00.000Z"
+}
+```
+
+**❌ 404 Not Found (Invalid ID)**
+```json
+{
+  "success": false,
+  "message": "Cookbook not found.",
+  "data": null,
+  "timestamp": "2026-06-01T10:20:00.000Z"
+}
+```
