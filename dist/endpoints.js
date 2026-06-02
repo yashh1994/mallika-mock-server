@@ -8,7 +8,6 @@ const express_1 = require("express");
 const controllers_1 = require("./controllers");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const marked_1 = require("marked");
 class Endpoints {
     router;
     constructor() {
@@ -22,7 +21,6 @@ class Endpoints {
                 // Adjust path resolution based on standard TS dist vs src setups format
                 const docPath = path_1.default.resolve(process.cwd(), 'API-DOCUMENTATION.md');
                 const markdown = fs_1.default.readFileSync(docPath, 'utf8');
-                const htmlContent = marked_1.marked.parse(markdown);
                 res.send(`
                     <!DOCTYPE html>
                     <html lang="en">
@@ -30,8 +28,9 @@ class Endpoints {
                         <meta charset="UTF-8">
                         <meta name="viewport" content="width=device-width, initial-scale=1.0">
                         <title>Mallika Mock Server API Docs</title>
+                        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
                         <style>
-                            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: 0 auto; color: #333; }
+                            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 900px; margin: 0 auto; color: #333; display: none; }
                             pre { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 5px; overflow-x: auto; }
                             code { font-family: monospace; background: #eee; color: #d00; padding: 2px 5px; border-radius: 3px; }
                             pre code { background: none; color: inherit; padding: 0; }
@@ -39,7 +38,12 @@ class Endpoints {
                         </style>
                     </head>
                     <body>
-                        ${htmlContent}
+                        <div id="content"></div>
+                        <script>
+                            const rawMarkdown = \`\n\${${JSON.stringify(markdown).replace(/`/g, "\\`")}}\`;
+                            document.getElementById('content').innerHTML = marked.parse(rawMarkdown);
+                            document.body.style.display = 'block';
+                        </script>
                     </body>
                     </html>
                 `);
